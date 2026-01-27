@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Patient detail</title>
+</head>
+<body>
+<h1>Patient detail</h1>
+
+<p>Patient id: <span th:text="${patientId}">1</span></p>
+
+<p>Response (JSON):</p>
+<pre th:text="${patientJson}">{"id":1}</pre>
+
+<p><a href="/patients">Back to list</a></p>
+</body>
+</html>
