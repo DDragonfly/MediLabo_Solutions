@@ -27,7 +27,10 @@ public class PatientViewController {
     @GetMapping("/patients/{id}")
     public String patientDetail(@PathVariable Long id, Model model) {
         ResponseEntity<String> response = gatewayClient.get("/patients/" + id);
+        ResponseEntity<String> notesResponse = gatewayClient.get("/notes/patient/" + id);
+
         model.addAttribute("patientJson", response.getBody());
+        model.addAttribute("notesJson", notesResponse.getBody());
         model.addAttribute("patientId", id);
         return "patient-detail";
     }

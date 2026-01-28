@@ -32,4 +32,8 @@ public class GatewayClient {
         HttpEntity<Void> entity = new HttpEntity<>(authHeaders());
         return restTemplate.exchange(baseUrl + path, HttpMethod.GET, entity, String.class);
     }
+
+    public ResponseEntity<String> getNotesByPatientId(Long patientId) {
+        return get("/notes/patient/" + patientId);
+    }
 }
