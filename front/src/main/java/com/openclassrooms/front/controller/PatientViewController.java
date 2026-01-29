@@ -28,9 +28,11 @@ public class PatientViewController {
     public String patientDetail(@PathVariable Long id, Model model) {
         ResponseEntity<String> response = gatewayClient.get("/patients/" + id);
         ResponseEntity<String> notesResponse = gatewayClient.get("/notes/patient/" + id);
+        ResponseEntity<String> assessmentsResponse = gatewayClient.get("/assessments/patient/" + id);
 
         model.addAttribute("patientJson", response.getBody());
         model.addAttribute("notesJson", notesResponse.getBody());
+        model.addAttribute("assessmentJson", assessmentsResponse.getBody());
         model.addAttribute("patientId", id);
         return "patient-detail";
     }
