@@ -27,7 +27,7 @@ public class DataInitializer implements CommandLineRunner {
         }
 
         // ===== patId 1 - TestNone =====
-        save(1, "TestNone", "Le patient déclare qu'il se sent très bien " + "Poids égal ou inférieur au poids recommandé");
+        save(1, "TestNone", "Le patient déclare qu'il se sent très bien. " + "Poids égal ou inférieur au poids recommandé");
 
         // ===== patId 2 - TestBorderline =====
         save(2, "TestBorderline", "Le patient déclare qu'il ressent beaucoup de stress au travail. "
