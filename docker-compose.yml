@@ -7,11 +7,15 @@ services:
         - mongo_data:/data/db
 
     patient:
+      build:
+        context: ./patient
       image: patient-service:latest
       ports:
         - "8081:8081"
 
     notes:
+      build:
+        context: ./notes
       image: notes-service:latest
       environment:
         SPRING_PROFILES_ACTIVE: docker
@@ -21,13 +25,18 @@ services:
         - "8083:8083"
 
     assessment:
+      build:
+        context: ./assessment
       image: assessment-service:latest
+      container_name: assessment-service
       environment:
         SPRING_PROFILES_ACTIVE: docker
       ports:
         - "8084:8084"
 
     gateway:
+      build:
+        context: ./gateway
       image: gateway-service:latest
       environment:
         SPRING_PROFILES_ACTIVE: docker
@@ -39,6 +48,8 @@ services:
         - "8080:8080"
 
     front:
+      build:
+        context: ./front
       image: front-service:latest
       environment:
         SPRING_PROFILES_ACTIVE: docker

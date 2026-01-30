@@ -7,6 +7,8 @@ import com.openclassrooms.assessment.domain.RiskLevel;
 import com.openclassrooms.assessment.domain.Trigger;
 import com.openclassrooms.assessment.dto.NoteDto;
 import com.openclassrooms.assessment.dto.PatientDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +23,7 @@ public class RiskAssessmentService {
 
     private final GatewayClient gatewayClient;
     private final ObjectMapper objectMapper;
+    private static final Logger log = LoggerFactory.getLogger(RiskAssessmentService.class);
 
     public RiskAssessmentService(GatewayClient gatewayClient, ObjectMapper objectMapper) {
         this.gatewayClient = gatewayClient;
@@ -28,6 +31,8 @@ public class RiskAssessmentService {
     }
 
     public RiskLevel assess(Long patId) {
+        log.info("### ASSESSMENT SERVICE VERSION CHECK ###");
+        log.debug("Assessing diabetes risk for patient {}", patId);
         PatientDto patient = fetchPatient(patId);
         List<NoteDto> notes = fetchNotes(patId);
 
@@ -35,6 +40,8 @@ public class RiskAssessmentService {
         boolean isMale = patient.gender() != null && patient.gender().equalsIgnoreCase("M");
 
         int triggerCount = countTriggers(notes);
+
+        log.debug("Risk assessment for patId={} | age={} | gender ={} | notes={} | triggers={}", patId, age, patient.gender(), notes.size(), triggerCount);
 
         return determineRiskLevel(age, isMale, triggerCount);
     }
@@ -99,12 +106,18 @@ public class RiskAssessmentService {
         int count = 0;
 
         for (Trigger t : Trigger.values()) {
+            int found =0;
 
             if (t == Trigger.POIDS) {
-                count += countPoidsTrigger(normalizedNotes);
+                found = countPoidsTrigger(normalizedNotes);
             } else {
-                count += occurrences(normalizedNotes, t.token());
+                found = occurrences(normalizedNotes, t.token());
             }
+            if (found > 0) {
+                log.debug("Trigger detected: {} ({} occurrences)", t.name(), found);
+            }
+
+            count+=found;
         }
         return count;
     }
