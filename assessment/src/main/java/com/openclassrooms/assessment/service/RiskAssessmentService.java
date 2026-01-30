@@ -39,7 +39,7 @@ public class RiskAssessmentService {
         return determineRiskLevel(age, isMale, triggerCount);
     }
 
-    private RiskLevel determineRiskLevel(int age, boolean isMale, int triggerCount) {
+    RiskLevel determineRiskLevel(int age, boolean isMale, int triggerCount) {
         if (triggerCount == 0) return RiskLevel.None;
 
         // borderline
@@ -92,7 +92,7 @@ public class RiskAssessmentService {
         return Period.between(birthDate, LocalDate.now()).getYears();
     }
 
-    private int countTriggersFromText(String notesText) {
+    int countTriggersFromText(String notesText) {
         if (notesText == null) return 0;
         String normalizedNotes = normalize(notesText);
 
