@@ -1,0 +1,51 @@
+services:
+    mongo:
+      image: mongo:7
+      ports:
+        - "27017:27017"
+      volumes:
+        - mongo_data:/data/db
+
+    patient:
+      image: patient-service:latest
+      ports:
+        - "8081:8081"
+
+    notes:
+      image: notes-service:latest
+      environment:
+        SPRING_PROFILES_ACTIVE: docker
+      depends_on:
+        - mongo
+      ports:
+        - "8083:8083"
+
+    assessment:
+      image: assessment-service:latest
+      environment:
+        SPRING_PROFILES_ACTIVE: docker
+      ports:
+        - "8084:8084"
+
+    gateway:
+      image: gateway-service:latest
+      environment:
+        SPRING_PROFILES_ACTIVE: docker
+      depends_on:
+        - patient
+        - notes
+        - assessment
+      ports:
+        - "8080:8080"
+
+    front:
+      image: front-service:latest
+      environment:
+        SPRING_PROFILES_ACTIVE: docker
+      depends_on:
+        - gateway
+      ports:
+        - "8082:8082"
+
+volumes:
+  mongo_data:
