@@ -36,18 +36,11 @@ public class RiskAssessmentService {
 
         int triggerCount = countTriggers(notes);
 
-        System.out.println("patId=" + patId
-                + " age=" + age
-                + " gender=" + patient.gender()
-                + " notesCount=" + notes.size()
-                + " triggerCount=" + triggerCount);
+        return determineRiskLevel(age, isMale, triggerCount);
+    }
 
-        notes.forEach(n -> System.out.println("NOTE: " + n.note()));
-
-
-        if (triggerCount == 0) {
-            return RiskLevel.None;
-        }
+    private RiskLevel determineRiskLevel(int age, boolean isMale, int triggerCount) {
+        if (triggerCount == 0) return RiskLevel.None;
 
         // borderline
         if (age > 30 && triggerCount >= 2 && triggerCount <= 5) {
@@ -70,6 +63,7 @@ public class RiskAssessmentService {
             if (triggerCount == 6 || triggerCount == 7) return RiskLevel.InDanger;
         }
 
+        // default
         if (age > 30) return RiskLevel.Borderline;
         return RiskLevel.InDanger;
     }
@@ -98,31 +92,30 @@ public class RiskAssessmentService {
         return Period.between(birthDate, LocalDate.now()).getYears();
     }
 
+    private int countTriggersFromText(String notesText) {
+        if (notesText == null) return 0;
+        String normalizedNotes = normalize(notesText);
+
+        int count = 0;
+
+        for (Trigger t : Trigger.values()) {
+
+            if (t == Trigger.POIDS) {
+                count += countPoidsTrigger(normalizedNotes);
+            } else {
+                count += occurrences(normalizedNotes, t.token());
+            }
+        }
+        return count;
+    }
+
     private int countTriggers(List<NoteDto> notes) {
         String allNotes = notes.stream()
                 .map(NoteDto::note)
                 .filter(s -> s != null)
                 .reduce("", (a, b) -> a + " " + b );
 
-        String normalizedNotes = normalize(allNotes);
-
-        int count = 0;
-
-        for (Trigger t : Trigger.values()) {
-            int found = 0;
-
-            if (t == Trigger.POIDS) {
-                found += countPoidsTrigger(normalizedNotes);
-            } else {
-                found = occurrences(normalizedNotes, t.token());
-            }
-            if (found > 0) {
-                System.out.println("TRIGGER FOUND -> " + t.name()
-                + " (" + found + "occurrence(s))");
-            }
-            count += found;
-        }
-        return count;
+        return countTriggersFromText(allNotes);
     }
 
     private int countPoidsTrigger(String normalizedNotes) {
