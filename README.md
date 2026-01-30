@@ -1,60 +1,58 @@
-# MediLabo_Solutions
-P9 OpenClassrooms Microservices app
-
 # MediLabo Solutions
 
-This project is a microservices-based application developed as part of the OpenClassrooms Java Developer path.
+Microservices-based application to manage patients, medical notes, and diabetes risk assessment.
+Services are exposed through a Spring Cloud Gateway and the UI is provided by a Thymeleaf front.
 
-## Architecture (Sprint 1)
+## Architecture
 
-The application is composed of three independent microservices:
-
-- **Patient service** (Spring Boot, SQL, H2)
-- **Gateway** (Spring Cloud Gateway)
-- **Front** (Spring Boot, Thymeleaf)
-
-## Microservices
-
-### Patient service
-- Manages patient records
-- Exposes REST endpoints for CRUD operations
-- Uses an SQL database (H2)
-- Secured with HTTP Basic authentication
-
-**Port:** 8081
-
-### Gateway
-- Entry point for all client requests
-- Routes requests to backend microservices
-
-**Port:** 8080
-
-### Front
-- Simple user interface to display patient data
-- Communicates only with the Gateway
-
-**Port:** 8082
-
-## Authentication (development)
-For development and testing purposes, HTTP Basic authentication is used.
-
-Username: admin  
-Password: admin
+**Microservices**
+- **patient-service** (Spring Boot + H2) — port **8081**
+- **notes-service** (Spring Boot + MongoDB) — port **8083**
+- **assessment-service** (Spring Boot) — port **8084**
+- **gateway-service** (Spring Cloud Gateway) — port **8080**
+- **front-service** (Spring Boot + Thymeleaf) — port **8082**
+- **mongo** (MongoDB) — port **27017**
 
 
-## Test data
-The SQL database is automatically populated at startup with the four patient test cases provided in the project requirements.
+## Prerequisites
 
-## How to run (Sprint 1)
+- Docker Desktop (Windows: WSL2 enabled)
+- Docker Compose (included with Docker Desktop)
 
-Start the services in the following order:
+## Run with Docker
 
-1. Patient service
-2. Gateway
-3. Front
+From the repository root:
 
-Then open:
+```bash
+docker compose up --build
+```
 
-- Patient list: http://localhost:8082/patients
-- Patient detail: http://localhost:8082/patients/{id}
+### Access
 
+- Front UI: `http://localhost:8082/patients`
+    
+- Gateway (API entrypoint):
+    
+    - Patients: `http://localhost:8080/patients`
+        
+    - Notes (example): `http://localhost:8080/notes/patient/2`
+        
+    - Assessment (example): `http://localhost:8080/assessments/patient/4`
+        
+
+### Authentication
+
+Basic authentication is enabled (Spring Security).
+
+- Username: `admin`
+    
+- Password: `admin`
+    
+
+## Stop
+
+`docker compose down`
+
+## Clean volumes (Mongo data)
+
+`docker compose down -v`
