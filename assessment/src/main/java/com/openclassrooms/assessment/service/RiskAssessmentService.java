@@ -30,6 +30,17 @@ public class RiskAssessmentService {
         this.objectMapper = objectMapper;
     }
 
+    /**
+     * Computes the diabetes risk level for a given patient.
+     *
+     * <p>
+     * Patient demographic data and medical notes are retrieved through the gateway.
+     * The risk level is then determined according to the business rules defined
+     * by the MediLabo specifications.
+     *
+     * @param patId the patient identifier
+     * @return the computed diabetes {@link RiskLevel}
+     */
     public RiskLevel assess(Long patId) {
         log.info("### ASSESSMENT SERVICE VERSION CHECK ###");
         log.debug("Assessing diabetes risk for patient {}", patId);
@@ -46,6 +57,23 @@ public class RiskAssessmentService {
         return determineRiskLevel(age, isMale, triggerCount);
     }
 
+    /**
+     * Determines the diabetes risk level based on patient characteristics
+     * and the number of detected trigger terms.
+     *
+     * <p>
+     * Rules depend on:
+     * <ul>
+     *   <li>Patient age (above or below 30)</li>
+     *   <li>Patient gender</li>
+     *   <li>Number of trigger terms found in medical notes</li>
+     * </ul>
+     *
+     * @param age patient age in years
+     * @param isMale whether the patient is male
+     * @param triggerCount number of detected trigger terms
+     * @return the corresponding {@link RiskLevel}
+     */
     RiskLevel determineRiskLevel(int age, boolean isMale, int triggerCount) {
         if (triggerCount == 0) return RiskLevel.None;
 
@@ -99,6 +127,18 @@ public class RiskAssessmentService {
         return Period.between(birthDate, LocalDate.now()).getYears();
     }
 
+    /**
+     * Counts the number of diabetes-related trigger terms in the provided text.
+     *
+     * <p>
+     * Trigger detection is case- and accent-insensitive.
+     * Each trigger is counted independently, except for the "POIDS" trigger,
+     * which is handled separately to exclude explicit mentions of normal
+     * or below-recommended weight.
+     *
+     * @param notesText concatenated medical notes
+     * @return number of detected trigger terms
+     */
     int countTriggersFromText(String notesText) {
         if (notesText == null) return 0;
         String normalizedNotes = normalize(notesText);
@@ -131,8 +171,19 @@ public class RiskAssessmentService {
         return countTriggersFromText(allNotes);
     }
 
+    /**
+     * Counts occurrences of the "poids" trigger while excluding expressions
+     * that explicitly indicate a normal or below-recommended weight.
+     *
+     * <p>
+     * This workaround is required to correctly interpret the functional
+     * test cases provided in the project specifications, where certain
+     * notes mention weight in a non-pathological context.
+     *
+     * @param normalizedNotes normalized medical notes text
+     * @return number of relevant "poids" trigger occurrences
+     */
     private int countPoidsTrigger(String normalizedNotes) {
-        // astuce POIDS
         String filtered = normalizedNotes
                 .replaceAll("\\bpoids\\b\\s+egal\\s+ou\\s+inferieur\\s+au\\s+poids\\s+recommande", " ")
                 .replaceAll("\\bpoids\\b\\s+normal", " ");

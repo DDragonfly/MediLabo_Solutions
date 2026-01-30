@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * REST controller exposing endpoints to assess diabetes risk for patients.
+ */
 @RestController
 @RequestMapping("/assessments")
 public class AssessmentController {
@@ -18,6 +21,12 @@ public class AssessmentController {
         this.riskAssessmentService = riskAssessmentService;
     }
 
+    /**
+     * Returns the diabetes risk assessment for a given patient.
+     *
+     * @param patId patient identifier
+     * @return assessment result containing patient id and risk level
+     */
     @GetMapping("/patient/{patId}")
     public ResponseEntity<AssessmentResponse> assess(@PathVariable Long patId) {
         RiskLevel level = riskAssessmentService.assess(patId);
