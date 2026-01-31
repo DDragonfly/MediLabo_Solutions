@@ -3,18 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <title>Patients</title>
+    <style>
+        table { border-collapse: collapse; }
+        th, td { border: 1px solid #999; padding: 6px; }
+        th { text-align: left; }
+        .actions a { text-decoration: none; }
+    </style>
 </head>
 <body>
-<form th:action="@{/logout}" method="post">
-    <button type="submit">Logout</button>
-</form>
 
 <h1>Patients</h1>
 
-<p>Response (JSON):</p>
-<pre th:text="${patientsJson}">[]</pre>
+<form th:action="@{/logout}" method="post" style="margin-bottom: 16px;">
+    <button type="submit">Logout</button>
+</form>
 
-<p>Tip: open a patient detail at /patients/1</p>
+<table>
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>First name</th>
+        <th>Last name</th>
+        <th>Birth</th>
+        <th>Gender</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="p : ${patients}">
+        <td th:text="${p.id()}">1</td>
+        <td th:text="${p.firstName()}">Test</td>
+        <td th:text="${p.lastName()}">TestNone</td>
+        <td th:text="${p.birthDate()}">1966-12-31</td>
+        <td th:text="${p.gender()}">F</td>
+
+        <td><a th:href="@{/patients/{id}/notes(id=${p.id()})}"><button type="button">NOTES</a></td>
+    </tr>
+    </tbody>
+</table>
 
 </body>
 </html>

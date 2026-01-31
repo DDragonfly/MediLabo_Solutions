@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 public class LoginController {
 
     @GetMapping("/")
-    public String home(HttpSession session) {
+    public String root(HttpSession session) {
         SessionAuth auth = (SessionAuth) session.getAttribute("auth");
         return (auth == null) ? "redirect:/login" : "redirect:/patients";
     }
