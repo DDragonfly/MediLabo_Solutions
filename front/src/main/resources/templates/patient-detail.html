@@ -5,6 +5,10 @@
     <title>Patient detail</title>
 </head>
 <body>
+<form th:action="@{/logout}" method="post">
+    <button type="submit">Logout</button>
+</form>
+
 <h1>Patient detail</h1>
 
 <p>Patient id: <span th:text="${patientId}">1</span></p>

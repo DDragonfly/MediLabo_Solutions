@@ -1,5 +1,6 @@
 package com.openclassrooms.front.client;
 
+import com.openclassrooms.front.session.SessionAuth;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
@@ -16,11 +17,13 @@ public class GatewayClient {
     @Value("${gateway.base-url}")
     private String baseUrl;
 
-    private static final String USERNAME = "admin";
-    private static final String PASSWORD = "admin";
 
-    private HttpHeaders authHeaders() {
-        String token = USERNAME + ":" + PASSWORD;
+    private HttpHeaders authHeaders(SessionAuth auth) {
+        if (auth == null || auth.getUsername() == null || auth.getPassword() == null) {
+            return new HttpHeaders();
+        }
+
+        String token = auth.getUsername() + ":" + auth.getPassword();
         String base64 = Base64.getEncoder().encodeToString(token.getBytes(StandardCharsets.UTF_8));
 
         HttpHeaders headers = new HttpHeaders();
@@ -28,12 +31,12 @@ public class GatewayClient {
         return headers;
     }
 
-    public ResponseEntity<String> get(String path) {
-        HttpEntity<Void> entity = new HttpEntity<>(authHeaders());
+    public ResponseEntity<String> get(String path, SessionAuth auth) {
+        HttpEntity<Void> entity = new HttpEntity<>(authHeaders(auth));
         return restTemplate.exchange(baseUrl + path, HttpMethod.GET, entity, String.class);
     }
 
-    public ResponseEntity<String> getNotesByPatientId(Long patientId) {
-        return get("/notes/patient/" + patientId);
+    public ResponseEntity<String> getNotesByPatientId(Long patientId, SessionAuth auth) {
+        return get("/notes/patient/" + patientId, auth);
     }
 }
