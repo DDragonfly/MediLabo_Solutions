@@ -36,6 +36,21 @@ public class GatewayClient {
         return restTemplate.exchange(baseUrl + path, HttpMethod.GET, entity, String.class);
     }
 
+    public ResponseEntity<String> post(String path, Object body, SessionAuth auth) {
+        HttpEntity<Object> entity = new HttpEntity<>(body, authHeaders(auth));
+        return restTemplate.exchange(baseUrl + path, HttpMethod.POST, entity, String.class);
+    }
+
+    public ResponseEntity<String> put(String path, Object body, SessionAuth auth) {
+        HttpEntity<Object> entity = new HttpEntity<>(body, authHeaders(auth));
+        return restTemplate.exchange(baseUrl + path, HttpMethod.PUT, entity, String.class);
+    }
+
+    public ResponseEntity<String> delete(String path, SessionAuth auth) {
+        HttpEntity<Void> entity = new HttpEntity<>(authHeaders(auth));
+        return restTemplate.exchange(baseUrl + path, HttpMethod.DELETE, entity, String.class);
+    }
+
     public ResponseEntity<String> getNotesByPatientId(Long patientId, SessionAuth auth) {
         return get("/notes/patient/" + patientId, auth);
     }

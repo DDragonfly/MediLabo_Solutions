@@ -1,4 +1,4 @@
-package com.openclassrooms.assessment.dto;
+package com.openclassrooms.front.dto;
 
 import java.time.LocalDate;
 
@@ -7,5 +7,7 @@ public record PatientDto(
         String firstName,
         String lastName,
         LocalDate birthDate,
-        String gender
+        String gender,
+        String address,
+        String phone
 ) {}

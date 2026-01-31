@@ -7,6 +7,10 @@ services:
         - mongo_data:/data/db
 
     patient:
+      environment:
+        SPRING_PROFILES_ACTIVE: docker
+      volumes:
+        - patient-h2-data:/data
       build:
         context: ./patient
       image: patient-service:latest
@@ -60,3 +64,4 @@ services:
 
 volumes:
   mongo_data:
+  patient-h2-data:

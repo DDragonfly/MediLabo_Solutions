@@ -10,6 +10,12 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 public class LoginController {
 
+    @GetMapping("/")
+    public String home(HttpSession session) {
+        SessionAuth auth = (SessionAuth) session.getAttribute("auth");
+        return (auth == null) ? "redirect:/login" : "redirect:/patients";
+    }
+
     @GetMapping("/login")
     public String loginPage(Model model) {
         model.addAttribute("form", new LoginForm("", ""));

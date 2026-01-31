@@ -18,4 +18,9 @@ public class NoteService {
     public List<Note> getNotesByPatId(Integer patId) {
         return noteRepository.findByPatId(patId);
     }
+
+    public Note createNote(Note note) {
+        note.setId(null);
+        return noteRepository.save(note);
+    }
 }
