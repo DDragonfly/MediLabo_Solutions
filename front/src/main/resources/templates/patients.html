@@ -30,6 +30,8 @@
         <th>Last name</th>
         <th>Birth</th>
         <th>Gender</th>
+        <th>Address</th>
+        <th>Phone</th>
         <th>Actions</th>
     </tr>
     </thead>
@@ -40,6 +42,8 @@
         <td th:text="${p.lastName()}">TestNone</td>
         <td th:text="${p.birthDate()}">1966-12-31</td>
         <td th:text="${p.gender()}">F</td>
+        <td th:text="${p.address()}">Address</td>
+        <td th:text="${p.phone()}">Phone</td>
 
         <td>
             <a th:href="@{/patients/{id}/notes(id=${p.id()})}"><button type="button">NOTES</a>
