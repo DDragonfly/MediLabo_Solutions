@@ -8,6 +8,19 @@
         th, td { border: 1px solid #999; padding: 6px; }
         th { text-align: left; }
         .actions a { text-decoration: none; }
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid #999;
+        }
+        .badge-none { background: #eef7ee; border-color: #7bbf7b; }
+        .badge-borderline { background: #fff3cd; border-color: #d6b656; }
+        .badge-indanger { background: #ffe0e0; border-color: #d65c5c; }
+        .badge-earlyonset { background: #f3e6ff; border-color: #9a63d6; }
+        .badge-unknown { background: #eee; border-color: #999; }
     </style>
 </head>
 <body>
@@ -25,20 +38,40 @@
     <a th:href="@{/patients}">Back to patients</a>
 </p>
 
+<p>
+    <a th:href="@{/patients/{id}/notes/add(id=${patient.id()})}"><button type="button">Add note</button></a>
+</p>
+
 <table>
     <thead>
     <tr>
         <th>Note ID</th>
         <th>Content</th>
+        <th>Actions</th>
     </tr>
     </thead>
     <tbody>
     <tr th:each="n : ${notes}">
         <td th:text="${n.id()}">...</td>
         <td th:text="${n.note()}">...</td>
+        <td>
+            <a th:href="@{/patients/{id}/notes/{noteId}/edit(id=${patient.id()}, noteId=${n.id()})}"><button type="button">Edit</button></a>
+        </td>
     </tr>
     </tbody>
 </table>
+
+<h2>Risk assessment</h2>
+<p>
+    Current risk assessment:
+    <span th:switch="${assessment.riskLevel()}">
+    <span th:case="'None'" class="badge badge-none">None</span>
+    <span th:case="'Borderline'" class="badge badge-borderline">Borderline</span>
+    <span th:case="'InDanger'" class="badge badge-indanger">In Danger</span>
+    <span th:case="'EarlyOnset'" class="badge badge-earlyonset">Early onset</span>
+    <span th:case="*" class="badge badge-unknown" th:text="${assessment.riskLevel()}">Unknown</span>
+  </span>
+</p>
 
 </body>
 </html>

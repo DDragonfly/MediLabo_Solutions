@@ -28,4 +28,22 @@ public class NoteController {
         Note created = noteService.createNote(note);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Note> getNote(@PathVariable String id) {
+        try {
+            return ResponseEntity.ok(noteService.getNoteById(id));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Note> updateNote(@PathVariable String id, @RequestBody Note note) {
+        try {
+            return ResponseEntity.ok(noteService.updateNote(id, note));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }

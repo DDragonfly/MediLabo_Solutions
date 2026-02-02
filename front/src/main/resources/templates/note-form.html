@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${mode == 'edit'} ? 'Edit note' : 'Add note'">Note form</title>
+    <style>
+        label { display:block; margin-top:10px; }
+        textarea { width: 520px; height: 160px; padding: 6px; }
+        .error { color: #b00020; margin-top: 12px; }
+        .actions { margin-top: 16px; }
+    </style>
+</head>
+<body>
+
+<h1 th:text="${mode == 'edit'} ? 'Edit note' : 'Add note'">Note form</h1>
+
+<p>
+    Patient:
+    <strong th:text="${patient.firstName()}">Test</strong>
+    <strong th:text="${patient.lastName()}">TestNone</strong>
+    (ID: <span th:text="${patient.id()}">1</span>)
+</p>
+
+<div th:if="${error}" class="error" th:text="${error}">Error</div>
+
+<form th:object="${form}"
+      th:action="${mode} == 'edit'
+        ? @{/patients/{id}/notes/{noteId}(id=${patient.id()}, noteId=${noteId})}
+        : @{/patients/{id}/notes(id=${patient.id()})}"
+      method="post">
+
+    <label>Note *</label>
+    <textarea th:field="*{note}" required></textarea>
+
+    <div class="actions">
+        <button type="submit" th:text="${mode == 'edit'} ? 'Save' : 'Create'">Submit</button>
+        <a th:href="@{/patients/{id}/notes(id=${patient.id()})}">
+            <button type="button">Cancel</button>
+        </a>
+    </div>
+</form>
+
+</body>
+</html>

@@ -23,4 +23,16 @@ public class NoteService {
         note.setId(null);
         return noteRepository.save(note);
     }
+
+    public Note getNoteById(String id) {
+        return noteRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Note with id " + id + " not found"));
+    }
+
+    public Note updateNote(String id, Note updated) {
+        Note existing = getNoteById(id);
+        existing.setPatId(updated.getPatId());
+        existing.setPatient(updated.getPatient());
+        existing.setNote(updated.getNote());
+        return noteRepository.save(existing);
+    }
 }

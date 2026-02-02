@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openclassrooms.front.client.GatewayClient;
 import com.openclassrooms.front.dto.NoteDto;
+import com.openclassrooms.front.dto.NoteForm;
 import com.openclassrooms.front.dto.PatientDto;
 import com.openclassrooms.front.dto.PatientForm;
 import com.openclassrooms.front.session.SessionAuth;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.HashMap;
 import java.util.List;
 
 @Controller
@@ -136,24 +138,4 @@ public class PatientViewController {
         gatewayClient.put("/patients/" + id, form, auth);
         return "redirect:/patients";
     }
-
-
-    @GetMapping("/patients/{id}/notes")
-    public String patientNotes(@PathVariable Long id, Model model, HttpSession session) throws Exception {
-        SessionAuth auth  = (SessionAuth) session.getAttribute("auth");
-        if (auth == null) {
-            return "redirect:/login";
-        }
-
-        ResponseEntity<String> patientResp = gatewayClient.get("/patients/" + id, auth);
-        ResponseEntity<String> notesResp = gatewayClient.get("/notes/patient/" + id, auth);
-
-        PatientDto patient = objectMapper.readValue(patientResp.getBody(), PatientDto.class);
-        List<NoteDto> notes = objectMapper.readValue(notesResp.getBody(), new TypeReference<List<NoteDto>>() {});
-
-        model.addAttribute("patient", patient);
-        model.addAttribute("notes", notes);
-        return "patient-notes";
-    }
-
 }
