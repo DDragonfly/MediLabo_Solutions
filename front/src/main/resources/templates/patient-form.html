@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${mode == 'edit'} ? 'Edit patient' : 'Add patient'">Patient form</title>
+    <style>
+        label { display:block; margin-top:10px; }
+        input, select { width: 320px; padding: 6px; }
+        .error { color: #b00020; margin-top: 12px; }
+        .actions { margin-top: 16px; }
+    </style>
+</head>
+<body>
+
+<h1 th:text="${mode == 'edit'} ? 'Edit patient' : 'Add patient'">Patient form</h1>
+
+<div th:if="${error}" class="error" th:text="${error}">Error</div>
+<p th:if="${error}" th:text="${error}" style="color:red;"></p>
+
+<form th:object="${form}" th:action="${mode} == 'edit' ? @{/patients/{id}(id=${patientId})} : @{/patients}" method="post">
+
+    <label>First name *</label>
+    <input type="text" th:field="*{firstName}" required/>
+
+    <label>Last name *</label>
+    <input type="text" th:field="*{lastName}" required/>
+
+    <label>Birth date *</label>
+    <input type="date" th:field="*{birthDate}"  th:value="${form.birthDate != null ? #temporals.format(form.birthDate, 'yyyy-MM-dd') : ''}" required/>
+
+    <div style="font-size:12px; color:#555;">
+        debug birthDate = <span th:text="*{birthDate}">null</span>
+    </div>
+
+
+    <label>Gender *</label>
+    <select th:field="*{gender}" required>
+        <option value="">--</option>
+        <option value="M">M</option>
+        <option value="F">F</option>
+    </select>
+
+    <label>Address</label>
+    <input type="text" th:field="*{address}" />
+
+    <label>Phone</label>
+    <input type="text" th:field="*{phone}" />
+
+    <div class="actions">
+        <button type="submit" th:text="${mode == 'edit'} ? 'Save' : 'Create'">Submit</button>
+        <a href="/patients"><button type="button">Cancel</button></a>
+    </div>
+</form>
+
+</body>
+</html>
