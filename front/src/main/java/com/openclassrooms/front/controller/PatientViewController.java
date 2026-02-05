@@ -20,17 +20,45 @@ import org.springframework.web.bind.annotation.PostMapping;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * MVC controller responsible for patient management views.
+ *
+ * <p>
+ * This controller allows users to:
+ * <ul>
+ *     <li>View the list of patients</li>
+ *     <li>Create a new patient</li>
+ *     <li>Edit existing patient information</li>
+ * </ul>
+ *
+ * <p>
+ * All operations are performed via the API Gateway to ensure
+ * proper separation between front-end and back-end services.
+ */
 @Controller
 public class PatientViewController {
 
     private final GatewayClient gatewayClient;
     private final ObjectMapper objectMapper;
 
+    /**
+     * Constructs a PatientViewController.
+     *
+     * @param gatewayClient client used to communicate with the API Gateway
+     * @param objectMapper mapper used to deserialize JSON responses
+     */
     public PatientViewController(GatewayClient gatewayClient, ObjectMapper objectMapper) {
         this.gatewayClient = gatewayClient;
         this.objectMapper = objectMapper;
     }
 
+    /**
+     * Displays the list of all patients.
+     *
+     * @param model   Spring MVC model
+     * @param session HTTP session
+     * @return the patients view or a redirect to login
+     */
     @GetMapping("/patients")
     public String listPatients(Model model, HttpSession session) throws Exception {
         SessionAuth auth  = (SessionAuth) session.getAttribute("auth");
@@ -66,6 +94,13 @@ public class PatientViewController {
         return "patient-detail";
     }
 
+    /**
+     * Displays the form to create a new patient.
+     *
+     * @param model   Spring MVC model
+     * @param session HTTP session
+     * @return the patient-form view or a redirect to login
+     */
     @GetMapping("/patients/new")
     public String newPatientForm(Model model, HttpSession session) {
         SessionAuth auth = (SessionAuth) session.getAttribute("auth");
@@ -76,6 +111,14 @@ public class PatientViewController {
         return "patient-form";
     }
 
+    /**
+     * Handles the creation of a new patient.
+     *
+     * @param form    patient form submitted by the user
+     * @param model   Spring MVC model
+     * @param session HTTP session
+     * @return redirect to the patients list
+     */
     @PostMapping("/patients")
     public String createPatient(
             @ModelAttribute("form") PatientForm form,
@@ -95,6 +138,14 @@ public class PatientViewController {
         return "redirect:/patients";
     }
 
+    /**
+     * Displays the form to edit an existing patient.
+     *
+     * @param id      patient identifier
+     * @param model   Spring MVC model
+     * @param session HTTP session
+     * @return the patient-form view or a redirect to login
+     */
     @GetMapping("/patients/{id}/edit")
     public String editPatientForm(@PathVariable Long id, Model model, HttpSession session) throws Exception {
         SessionAuth auth = (SessionAuth) session.getAttribute("auth");
@@ -117,6 +168,15 @@ public class PatientViewController {
         return "patient-form";
     }
 
+    /**
+     * Handles the update of an existing patient.
+     *
+     * @param id      patient identifier
+     * @param form    updated patient form
+     * @param model   Spring MVC model
+     * @param session HTTP session
+     * @return redirect to the patients list
+     */
     @PostMapping("/patients/{id}")
     public String updatePatient(
             @PathVariable Long id,

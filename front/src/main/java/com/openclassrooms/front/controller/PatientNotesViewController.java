@@ -20,15 +20,47 @@ import org.springframework.web.bind.annotation.PostMapping;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * MVC controller responsible for managing the views related to
+ * patient medical notes and risk assessment.
+ *
+ * <p>
+ * This controller handles:
+ * <ul>
+ *     <li>Displaying all notes for a given patient</li>
+ *     <li>Creating new medical notes</li>
+ *     <li>Editing existing medical notes</li>
+ *     <li>Displaying the diabetes risk assessment associated with a patient</li>
+ * </ul>
+ *
+ * <p>
+ * All data is retrieved through the API Gateway, ensuring that
+ * the front-end remains decoupled from the underlying microservices.
+ */
 @Controller
 public class PatientNotesViewController {
     private final GatewayClient gatewayClient;
     private final ObjectMapper objectMapper;
+
+    /**
+     * Constructs a PatientNotesViewController.
+     *
+     * @param gatewayClient client used to communicate with the API Gateway
+     * @param objectMapper mapper used to deserialize JSON responses
+     */
     public PatientNotesViewController(GatewayClient gatewayClient, ObjectMapper objectMapper) {
         this.gatewayClient = gatewayClient;
         this.objectMapper = objectMapper;
     }
 
+    /**
+     * Displays all medical notes and the risk assessment for a given patient.
+     *
+     * @param id      patient identifier
+     * @param model   Spring MVC model
+     * @param session HTTP session used for authentication
+     * @return the patient-notes view or a redirect to login if unauthenticated
+     */
     @GetMapping("/patients/{id}/notes")
     public String patientNotes(@PathVariable Long id, Model model, HttpSession session) throws Exception {
         SessionAuth auth  = (SessionAuth) session.getAttribute("auth");
@@ -50,6 +82,14 @@ public class PatientNotesViewController {
         return "patient-notes";
     }
 
+    /**
+     * Displays the form used to add a new medical note for a patient.
+     *
+     * @param id      patient identifier
+     * @param model   Spring MVC model
+     * @param session HTTP session
+     * @return the note-form view or a redirect to login
+     */
     @GetMapping("/patients/{id}/notes/add")
     public String addNoteForm(@PathVariable Long id, Model model, HttpSession session) throws Exception {
         SessionAuth auth  = (SessionAuth) session.getAttribute("auth");
@@ -64,6 +104,15 @@ public class PatientNotesViewController {
         return "note-form";
     }
 
+    /**
+     * Handles the creation of a new medical note.
+     *
+     * @param id      patient identifier
+     * @param form    note form submitted by the user
+     * @param model   Spring MVC model
+     * @param session HTTP session
+     * @return redirect to the patient's notes page
+     */
     @PostMapping("/patients/{id}/notes")
     public String createNote(@PathVariable Long id, @ModelAttribute("form") NoteForm form, Model model, HttpSession session) throws Exception {
         SessionAuth auth  = (SessionAuth) session.getAttribute("auth");
@@ -91,6 +140,15 @@ public class PatientNotesViewController {
         return "redirect:/patients/" + id + "/notes";
     }
 
+    /**
+     * Displays the form used to edit an existing medical note.
+     *
+     * @param id      patient identifier
+     * @param noteId  note identifier
+     * @param model   Spring MVC model
+     * @param session HTTP session
+     * @return the note-form view or a redirect to login
+     */
     @GetMapping("/patients/{id}/notes/{noteId}/edit")
     public String editNoteForm(@PathVariable Long id, @PathVariable String noteId, Model model, HttpSession session) throws Exception {
         SessionAuth auth  = (SessionAuth) session.getAttribute("auth");
@@ -112,6 +170,16 @@ public class PatientNotesViewController {
         return "note-form";
     }
 
+    /**
+     * Handles the update of an existing medical note.
+     *
+     * @param id      patient identifier
+     * @param noteId  note identifier
+     * @param form    updated note form
+     * @param model   Spring MVC model
+     * @param session HTTP session
+     * @return redirect to the patient's notes page
+     */
     @PostMapping("/patients/{id}/notes/{noteId}")
     public String updateNote(@PathVariable Long id, @PathVariable String noteId, @ModelAttribute("form") NoteForm form, Model model, HttpSession session) throws Exception {
         SessionAuth auth  = (SessionAuth) session.getAttribute("auth");
